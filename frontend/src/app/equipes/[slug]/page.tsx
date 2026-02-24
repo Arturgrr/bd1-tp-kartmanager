@@ -14,7 +14,6 @@ import {
   teams,
   getPilotsByTeam,
   getTeamCategories,
-  getCategoryById,
 } from "@/lib/mock-data"
 import type { Metadata } from "next"
 import { ArrowLeft } from "lucide-react"
@@ -43,7 +42,6 @@ export default async function EquipeDetailPage({ params }: { params: Promise<{ s
         <ArrowLeft className="h-4 w-4" /> Voltar para equipes
       </Link>
 
-      {/* Team Header */}
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-center">
         <div
           className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg"
@@ -69,7 +67,6 @@ export default async function EquipeDetailPage({ params }: { params: Promise<{ s
         </div>
       </div>
 
-      {/* Stats */}
       <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
         <Card className="border-border bg-card">
           <CardContent className="py-4 text-center">
@@ -101,7 +98,6 @@ export default async function EquipeDetailPage({ params }: { params: Promise<{ s
         </Card>
       </div>
 
-      {/* Pilots by Category */}
       {teamCategories.map((cat) => {
         const catPilots = teamPilots.filter((p) => p.categoryId === cat.id)
         if (catPilots.length === 0) return null

@@ -74,7 +74,6 @@ export default function CategoriaDetailPage() {
         </div>
       </div>
 
-      {/* Season Stats */}
       <div className="mt-6 grid grid-cols-3 gap-4">
         <Card className="border-border bg-card">
           <CardContent className="py-4 text-center">
@@ -96,7 +95,6 @@ export default function CategoriaDetailPage() {
         </Card>
       </div>
 
-      {/* Standings Table */}
       <section className="mt-8">
         <h2 className="mb-4 font-serif text-xl font-bold uppercase text-foreground">
           Classificacao - Temporada {selectedSeason}

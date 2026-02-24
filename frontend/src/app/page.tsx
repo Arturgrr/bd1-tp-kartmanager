@@ -21,7 +21,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero */}
       <section className="relative overflow-hidden bg-card py-16 md:py-24">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
         <div className="relative mx-auto max-w-7xl px-4">
@@ -56,7 +55,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats */}
       <section className="border-b border-border bg-secondary/50 py-6">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 md:grid-cols-4">
           <div className="flex items-center gap-3">
@@ -98,7 +96,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Upcoming Races */}
       <section className="mx-auto w-full max-w-7xl px-4 py-12">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-serif text-2xl font-bold uppercase tracking-tight text-foreground">
@@ -135,7 +132,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Recent Results */}
       <section className="border-t border-border bg-secondary/30 py-12">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-6 flex items-center justify-between">
@@ -193,7 +189,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categories */}
       <section className="mx-auto w-full max-w-7xl px-4 py-12">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-serif text-2xl font-bold uppercase tracking-tight text-foreground">

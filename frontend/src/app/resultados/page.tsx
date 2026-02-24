@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   getCompletedRaces,
   getCategoryById,
@@ -30,8 +30,6 @@ export default function ResultadosPage() {
         {completedRaces.map((race) => {
           const category = getCategoryById(race.categoryId)
           const podium = race.results?.slice(0, 3) || []
-          const winner = podium[0] ? getPilotById(podium[0].pilotId) : null
-          const winnerTeam = podium[0] ? getTeamById(podium[0].teamId) : null
           return (
             <Link key={race.id} href={`/resultados/${race.slug}`}>
               <Card className="border-border bg-card transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">

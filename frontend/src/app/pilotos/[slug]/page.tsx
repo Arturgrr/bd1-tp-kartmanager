@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -39,7 +39,6 @@ export default async function PilotoDetailPage({ params }: { params: Promise<{ s
   const category = getCategoryById(pilot.categoryId)
   const stats = getPilotAllTimeStats(pilot.id)
 
-  // Find all race results for this pilot
   const pilotRaces = races
     .filter((r) => r.status === "completed" && r.results?.some((res) => res.pilotId === pilot.id))
     .map((r) => {
@@ -55,7 +54,6 @@ export default async function PilotoDetailPage({ params }: { params: Promise<{ s
         <ArrowLeft className="h-4 w-4" /> Voltar para pilotos
       </Link>
 
-      {/* Profile Header */}
       <div className="mt-4 flex flex-col gap-6 md:flex-row md:items-start">
         <div
           className="flex h-24 w-24 shrink-0 items-center justify-center rounded-lg font-serif text-4xl font-bold"
@@ -82,7 +80,6 @@ export default async function PilotoDetailPage({ params }: { params: Promise<{ s
         </div>
       </div>
 
-      {/* All-time Stats */}
       {stats && (
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-5">
           {[
@@ -102,7 +99,6 @@ export default async function PilotoDetailPage({ params }: { params: Promise<{ s
         </div>
       )}
 
-      {/* Season History */}
       <section className="mt-10">
         <h2 className="mb-4 font-serif text-xl font-bold uppercase text-foreground">Historico por Temporada</h2>
         <Card className="border-border bg-card">
@@ -156,7 +152,6 @@ export default async function PilotoDetailPage({ params }: { params: Promise<{ s
         </Card>
       </section>
 
-      {/* Race Results */}
       {pilotRaces.length > 0 && (
         <section className="mt-10">
           <h2 className="mb-4 font-serif text-xl font-bold uppercase text-foreground">Resultados em Corridas</h2>

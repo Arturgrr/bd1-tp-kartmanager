@@ -25,7 +25,6 @@ export default function CalendarioPage() {
       </h1>
       <p className="mt-2 text-muted-foreground">Todas as corridas da temporada.</p>
 
-      {/* Upcoming */}
       <section className="mt-10">
         <h2 className="mb-4 font-serif text-xl font-bold uppercase text-foreground">Proximas Corridas</h2>
         {upcomingRaces.length === 0 ? (
@@ -63,7 +62,6 @@ export default function CalendarioPage() {
         )}
       </section>
 
-      {/* By Category */}
       <section className="mt-12">
         <h2 className="mb-4 font-serif text-xl font-bold uppercase text-foreground">Por Categoria</h2>
         <div className="grid gap-6 md:grid-cols-2">
