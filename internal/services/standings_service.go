@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arturgrr/bd1-kartmanager/internal/store/pgstore"
+	"github.com/arturgrr/bd1-kartmanager/internal/use-cases/standings"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,14 +17,9 @@ func NewStandingsService(pool *pgxpool.Pool) *StandingsService {
 }
 
 func (s *StandingsService) ListByPiloto(ctx context.Context, pilotoCpf string) ([]pgstore.PilotoTemporada, error) {
-	return s.queries.ListPilotoTemporadaByPiloto(ctx, pilotoCpf)
+	return standings.ListByPiloto(ctx, s.queries, pilotoCpf)
 }
 
 func (s *StandingsService) ListByCategoriaAndTemporada(ctx context.Context, categoriaSlug string, temporada string) ([]pgstore.PilotoTemporada, error) {
-	params := pgstore.ListStandingsByCategoriaAndTemporadaParams{
-		CategoriaSlug: categoriaSlug,
-		Temporada:     temporada,
-	}
-	return s.queries.ListStandingsByCategoriaAndTemporada(ctx, params)
+	return standings.ListByCategoriaAndTemporada(ctx, s.queries, categoriaSlug, temporada)
 }
-

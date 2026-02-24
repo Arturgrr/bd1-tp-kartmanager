@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arturgrr/bd1-kartmanager/internal/store/pgstore"
+	"github.com/arturgrr/bd1-kartmanager/internal/use-cases/corrida"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,22 +17,21 @@ func NewCorridaService(pool *pgxpool.Pool) *CorridaService {
 }
 
 func (s *CorridaService) List(ctx context.Context) ([]pgstore.Corrida, error) {
-	return s.queries.ListCorridas(ctx)
+	return corrida.List(ctx, s.queries)
 }
 
 func (s *CorridaService) GetBySlug(ctx context.Context, slug string) (pgstore.Corrida, error) {
-	return s.queries.GetCorridaBySlug(ctx, slug)
+	return corrida.GetBySlug(ctx, s.queries, slug)
 }
 
 func (s *CorridaService) ListCompleted(ctx context.Context) ([]pgstore.Corrida, error) {
-	return s.queries.ListCorridasCompleted(ctx)
+	return corrida.ListCompleted(ctx, s.queries)
 }
 
 func (s *CorridaService) ListUpcoming(ctx context.Context) ([]pgstore.Corrida, error) {
-	return s.queries.ListCorridasUpcoming(ctx)
+	return corrida.ListUpcoming(ctx, s.queries)
 }
 
 func (s *CorridaService) ListByCategoria(ctx context.Context, categoriaSlug string) ([]pgstore.Corrida, error) {
-	return s.queries.ListCorridasByCategoria(ctx, categoriaSlug)
+	return corrida.ListByCategoria(ctx, s.queries, categoriaSlug)
 }
-

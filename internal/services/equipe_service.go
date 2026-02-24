@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arturgrr/bd1-kartmanager/internal/store/pgstore"
+	"github.com/arturgrr/bd1-kartmanager/internal/use-cases/equipe"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,10 +17,9 @@ func NewEquipeService(pool *pgxpool.Pool) *EquipeService {
 }
 
 func (s *EquipeService) List(ctx context.Context) ([]pgstore.Equipe, error) {
-	return s.queries.ListEquipes(ctx)
+	return equipe.List(ctx, s.queries)
 }
 
 func (s *EquipeService) GetBySlug(ctx context.Context, slug string) (pgstore.Equipe, error) {
-	return s.queries.GetEquipeBySlug(ctx, slug)
+	return equipe.GetBySlug(ctx, s.queries, slug)
 }
-

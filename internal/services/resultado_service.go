@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arturgrr/bd1-kartmanager/internal/store/pgstore"
+	"github.com/arturgrr/bd1-kartmanager/internal/use-cases/resultado"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,15 +17,9 @@ func NewResultadoService(pool *pgxpool.Pool) *ResultadoService {
 }
 
 func (s *ResultadoService) ListByCorrida(ctx context.Context, corridaSlug string) ([]pgstore.ResultadoCorrida, error) {
-	return s.queries.ListResultadosByCorrida(ctx, corridaSlug)
+	return resultado.ListByCorrida(ctx, s.queries, corridaSlug)
 }
 
 func (s *ResultadoService) GetByCorridaAndPosicao(ctx context.Context, corridaSlug string, posicao int32) (pgstore.ResultadoCorrida, error) {
-	params := pgstore.GetResultadoByCorridaAndPosicaoParams{
-		CorridaSlug: corridaSlug,
-		Posicao:     posicao,
-	}
-	return s.queries.GetResultadoByCorridaAndPosicao(ctx, params)
+	return resultado.GetByCorridaAndPosicao(ctx, s.queries, corridaSlug, posicao)
 }
-
-

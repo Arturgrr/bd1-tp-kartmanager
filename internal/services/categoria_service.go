@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arturgrr/bd1-kartmanager/internal/store/pgstore"
+	"github.com/arturgrr/bd1-kartmanager/internal/use-cases/categoria"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,9 +17,9 @@ func NewCategoriaService(pool *pgxpool.Pool) *CategoriaService {
 }
 
 func (s *CategoriaService) List(ctx context.Context) ([]pgstore.Categorium, error) {
-	return s.queries.ListCategorias(ctx)
+	return categoria.List(ctx, s.queries)
 }
 
 func (s *CategoriaService) GetBySlug(ctx context.Context, slug string) (pgstore.Categorium, error) {
-	return s.queries.GetCategoriaBySlug(ctx, slug)
+	return categoria.GetBySlug(ctx, s.queries, slug)
 }

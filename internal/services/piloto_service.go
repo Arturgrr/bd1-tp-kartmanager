@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/arturgrr/bd1-kartmanager/internal/store/pgstore"
+	"github.com/arturgrr/bd1-kartmanager/internal/use-cases/piloto"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -16,9 +17,9 @@ func NewPilotoService(pool *pgxpool.Pool) *PilotoService {
 }
 
 func (s *PilotoService) List(ctx context.Context) ([]pgstore.Piloto, error) {
-	return s.queries.ListPilotos(ctx)
+	return piloto.List(ctx, s.queries)
 }
 
 func (s *PilotoService) GetBySlug(ctx context.Context, slug string) (pgstore.Piloto, error) {
-	return s.queries.GetPilotoBySlug(ctx, slug)
+	return piloto.GetBySlug(ctx, s.queries, slug)
 }
