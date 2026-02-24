@@ -49,7 +49,6 @@ func execTernCommand(args ...string) ([]byte, error) {
 	cmd.Env = os.Environ() 
 	return cmd.CombinedOutput()
 }
-
 func main() {
 	if err := godotenv.Load(); err != nil {
 		panic(err)
