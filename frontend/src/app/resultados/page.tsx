@@ -10,7 +10,6 @@ import {
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import type { Metadata } from "next"
-import { Trophy } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Resultados",

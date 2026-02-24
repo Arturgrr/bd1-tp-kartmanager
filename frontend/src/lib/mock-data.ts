@@ -261,6 +261,10 @@ export function getTeamById(id: string) {
   return teams.find(t => t.id === id)
 }
 
+export function getTeamBySlug(slug: string) {
+  return teams.find(t => t.slug === slug) ?? null
+}
+
 export function getCategoryById(id: string) {
   return categories.find(c => c.id === id)
 }

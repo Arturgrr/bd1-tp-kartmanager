@@ -1,14 +1,20 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { categories, getPilotsByCategory, getTeamById } from "@/lib/mock-data"
+import { fetchCategorias, fetchPilotos } from "@/lib/api"
+import { getTeamBySlug } from "@/lib/mock-data"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Categorias",
 }
 
-export default function CategoriasPage() {
+export default async function CategoriasPage() {
+  const [categories, pilots] = await Promise.all([
+    fetchCategorias(),
+    fetchPilotos(),
+  ])
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <h1 className="font-serif text-3xl font-bold uppercase tracking-tight text-foreground md:text-4xl">
@@ -18,10 +24,10 @@ export default function CategoriasPage() {
 
       <div className="mt-8 flex flex-col gap-6">
         {categories.map((cat) => {
-          const catPilots = getPilotsByCategory(cat.id)
-          const uniqueTeams = [...new Set(catPilots.map((p) => p.teamId))]
+          const catPilots = pilots.filter((p) => p.categorySlug === cat.slug)
+          const uniqueTeams = [...new Set(catPilots.map((p) => p.teamSlug))]
           return (
-            <Card key={cat.id} className="border-border bg-card">
+            <Card key={cat.slug} className="border-border bg-card">
               <CardHeader>
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                   <div>
@@ -44,31 +50,27 @@ export default function CategoriasPage() {
               <CardContent>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {catPilots.map((pilot) => {
-                    const team = getTeamById(pilot.teamId)
-                    const currentSeason = pilot.seasonsHistory.find(
-                      (s) => s.categoryId === cat.id && s.season === "2025"
-                    )
+                    const team = getTeamBySlug(pilot.teamSlug)
                     return (
-                      <Link key={pilot.id} href={`/pilotos/${pilot.slug}`}>
+                      <Link key={pilot.cpf} href={`/pilotos/${pilot.slug}`}>
                         <div className="flex items-center gap-3 rounded-md bg-secondary/50 p-3 transition-colors hover:bg-secondary">
                           <div
                             className="flex h-9 w-9 shrink-0 items-center justify-center rounded font-serif text-sm font-bold"
-                            style={{ backgroundColor: team?.color + "20", color: team?.color }}
+                            style={{ backgroundColor: team ? team.color + "20" : "#333", color: team?.color ?? "#fff" }}
                           >
                             {pilot.number}
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="truncate text-sm font-medium text-foreground">{pilot.name}</p>
                             <div className="flex items-center gap-1.5">
-                              <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team?.color }} />
-                              <span className="truncate text-xs text-muted-foreground">{team?.name}</span>
+                              {team && (
+                                <>
+                                  <div className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: team.color }} />
+                                  <span className="truncate text-xs text-muted-foreground">{team.name}</span>
+                                </>
+                              )}
                             </div>
                           </div>
-                          {currentSeason && (
-                            <span className="shrink-0 font-serif text-sm font-bold text-primary">
-                              {currentSeason.points}pts
-                            </span>
-                          )}
                         </div>
                       </Link>
                     )
