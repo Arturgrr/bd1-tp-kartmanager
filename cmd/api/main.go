@@ -37,7 +37,8 @@ func main() {
 		panic(err)
 	}
 
-	app := api.NewAPI(pool)
+	sessionSecret := []byte(os.Getenv("SESSION_SECRET"))
+	app := api.NewAPI(pool, sessionSecret)
 	app.BindRoutes()
 
 	addr := os.Getenv("PORT")

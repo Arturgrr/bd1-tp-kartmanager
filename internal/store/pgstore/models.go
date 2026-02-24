@@ -8,6 +8,11 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Admin struct {
+	Email        string `json:"email"`
+	PasswordHash []byte `json:"password_hash"`
+}
+
 type Categorium struct {
 	Slug        string `json:"slug"`
 	Nome        string `json:"nome"`
