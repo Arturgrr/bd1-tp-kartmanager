@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "description": { "type": "string" },
+    "id": { "type": "string" },
+    "maxAge": { "type": "integer" },
+    "minAge": { "type": "integer" },
+    "name": { "type": "string" },
+    "slug": { "type": "string" }
+  },
+  "x-readme-ref-name": "internal_api.categoriaResponse"
+}

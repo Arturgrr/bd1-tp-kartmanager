@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "birthYear": { "type": "integer" },
+    "categorySlug": { "type": "string" },
+    "city": { "type": "string" },
+    "cpf": { "type": "string" },
+    "name": { "type": "string" },
+    "number": { "type": "integer" },
+    "slug": { "type": "string" },
+    "teamSlug": { "type": "string" }
+  },
+  "x-readme-ref-name": "internal_api.pilotoResponse"
+}

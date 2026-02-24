@@ -14,6 +14,9 @@ sqlc-generate:
 swagger:
 	@swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal
 
+kubb-generate:
+	@cd frontend && pnpm run generate
+
 watch:
 	@if command -v air > /dev/null; then \
             air; \

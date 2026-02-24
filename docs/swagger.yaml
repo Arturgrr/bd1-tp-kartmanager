@@ -15,6 +15,25 @@ definitions:
       slug:
         type: string
     type: object
+  internal_api.pilotoResponse:
+    properties:
+      birthYear:
+        type: integer
+      categorySlug:
+        type: string
+      city:
+        type: string
+      cpf:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+      slug:
+        type: string
+      teamSlug:
+        type: string
+    type: object
 info:
   contact: {}
   description: API do sistema UFOPKART (categorias, equipes, pilotos, corridas).
@@ -91,4 +110,60 @@ paths:
       summary: Health check
       tags:
       - health
+  /pilotos:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.pilotoResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista todos os pilotos
+      tags:
+      - pilotos
+  /pilotos/{slug}:
+    get:
+      parameters:
+      - description: Slug do piloto
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.pilotoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca piloto por slug
+      tags:
+      - pilotos
 swagger: "2.0"
