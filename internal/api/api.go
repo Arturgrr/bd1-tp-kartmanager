@@ -10,6 +10,7 @@ type API struct {
 	router           *gin.Engine
 	pool             *pgxpool.Pool
 	categoriaService *services.CategoriaService
+	pilotoService    *services.PilotoService
 }
 
 func NewAPI(pool *pgxpool.Pool) *API {
@@ -17,6 +18,7 @@ func NewAPI(pool *pgxpool.Pool) *API {
 		router:           gin.New(),
 		pool:             pool,
 		categoriaService: services.NewCategoriaService(pool),
+		pilotoService:    services.NewPilotoService(pool),
 	}
 }
 

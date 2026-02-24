@@ -15,4 +15,6 @@ func (api *API) BindRoutes() {
 	v1.GET("/health", api.handleHealth)
 	v1.GET("/categorias", api.handleListCategorias)
 	v1.GET("/categorias/:slug", api.handleGetCategoriaBySlug)
+	v1.GET("/pilotos", api.handleListPilotos)
+	v1.GET("/pilotos/:slug", api.handleGetPilotoBySlug)
 }
