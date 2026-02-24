@@ -17,4 +17,13 @@ func (api *API) BindRoutes() {
 	v1.GET("/categorias/:slug", api.handleGetCategoriaBySlug)
 	v1.GET("/pilotos", api.handleListPilotos)
 	v1.GET("/pilotos/:slug", api.handleGetPilotoBySlug)
+	v1.GET("/equipes", api.handleListEquipes)
+	v1.GET("/equipes/:slug", api.handleGetEquipeBySlug)
+	v1.GET("/corridas", api.handleListCorridas)
+	v1.GET("/corridas/:slug", api.handleGetCorridaBySlug)
+	v1.GET("/corridas/completed", api.handleListCorridasCompleted)
+	v1.GET("/corridas/upcoming", api.handleListCorridasUpcoming)
+	v1.GET("/corridas/:slug/resultados", api.handleListResultadosByCorrida)
+	v1.GET("/corridas/:slug/resultados/:posicao", api.handleGetResultadoByCorridaAndPosicao)
+	v1.GET("/standings", api.handleListStandings)
 }

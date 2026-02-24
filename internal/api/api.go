@@ -11,6 +11,10 @@ type API struct {
 	pool             *pgxpool.Pool
 	categoriaService *services.CategoriaService
 	pilotoService    *services.PilotoService
+	equipeService    *services.EquipeService
+	corridaService   *services.CorridaService
+	resultadoService *services.ResultadoService
+	standingsService *services.StandingsService
 }
 
 func NewAPI(pool *pgxpool.Pool) *API {
@@ -19,6 +23,10 @@ func NewAPI(pool *pgxpool.Pool) *API {
 		pool:             pool,
 		categoriaService: services.NewCategoriaService(pool),
 		pilotoService:    services.NewPilotoService(pool),
+		equipeService:    services.NewEquipeService(pool),
+		corridaService:   services.NewCorridaService(pool),
+		resultadoService: services.NewResultadoService(pool),
+		standingsService: services.NewStandingsService(pool),
 	}
 }
 
