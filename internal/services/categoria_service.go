@@ -23,3 +23,15 @@ func (s *CategoriaService) List(ctx context.Context) ([]pgstore.Categorium, erro
 func (s *CategoriaService) GetBySlug(ctx context.Context, slug string) (pgstore.Categorium, error) {
 	return categoria.GetBySlug(ctx, s.queries, slug)
 }
+
+func (s *CategoriaService) Create(ctx context.Context, slug, name string, idadeMinima, idadeMaxima int32, descricao string) (pgstore.Categorium, error) {
+	return categoria.Create(ctx, s.queries, slug, name, idadeMinima, idadeMaxima, descricao)
+}
+
+func (s *CategoriaService) Update(ctx context.Context, slug, name string, idadeMinima, idadeMaxima int32, descricao string) (pgstore.Categorium, error) {
+	return categoria.Update(ctx, s.queries, slug, name, idadeMinima, idadeMaxima, descricao)
+}
+
+func (s *CategoriaService) Delete(ctx context.Context, slug string) error {
+	return categoria.Delete(ctx, s.queries, slug)
+}

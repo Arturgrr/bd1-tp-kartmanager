@@ -42,6 +42,15 @@ func (q *Queries) CreateCategoria(ctx context.Context, arg CreateCategoriaParams
 	return i, err
 }
 
+const deleteCategoria = `-- name: DeleteCategoria :exec
+DELETE FROM categoria WHERE slug = $1
+`
+
+func (q *Queries) DeleteCategoria(ctx context.Context, slug string) error {
+	_, err := q.db.Exec(ctx, deleteCategoria, slug)
+	return err
+}
+
 const getCategoriaBySlug = `-- name: GetCategoriaBySlug :one
 SELECT slug, nome, idade_minima, idade_maxima, descricao
 FROM categoria
@@ -91,4 +100,38 @@ func (q *Queries) ListCategorias(ctx context.Context) ([]Categorium, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateCategoria = `-- name: UpdateCategoria :one
+UPDATE categoria
+SET nome = $2, idade_minima = $3, idade_maxima = $4, descricao = $5
+WHERE slug = $1
+RETURNING slug, nome, idade_minima, idade_maxima, descricao
+`
+
+type UpdateCategoriaParams struct {
+	Slug        string `json:"slug"`
+	Nome        string `json:"nome"`
+	IdadeMinima int32  `json:"idade_minima"`
+	IdadeMaxima int32  `json:"idade_maxima"`
+	Descricao   string `json:"descricao"`
+}
+
+func (q *Queries) UpdateCategoria(ctx context.Context, arg UpdateCategoriaParams) (Categorium, error) {
+	row := q.db.QueryRow(ctx, updateCategoria,
+		arg.Slug,
+		arg.Nome,
+		arg.IdadeMinima,
+		arg.IdadeMaxima,
+		arg.Descricao,
+	)
+	var i Categorium
+	err := row.Scan(
+		&i.Slug,
+		&i.Nome,
+		&i.IdadeMinima,
+		&i.IdadeMaxima,
+		&i.Descricao,
+	)
+	return i, err
 }

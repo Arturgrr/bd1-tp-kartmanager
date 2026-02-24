@@ -23,3 +23,15 @@ func (s *EquipeService) List(ctx context.Context) ([]pgstore.Equipe, error) {
 func (s *EquipeService) GetBySlug(ctx context.Context, slug string) (pgstore.Equipe, error) {
 	return equipe.GetBySlug(ctx, s.queries, slug)
 }
+
+func (s *EquipeService) Create(ctx context.Context, slug, name, cor string, anoFundacao int32, cidade string) (pgstore.Equipe, error) {
+	return equipe.Create(ctx, s.queries, slug, name, cor, anoFundacao, cidade)
+}
+
+func (s *EquipeService) Update(ctx context.Context, slug, name, cor string, anoFundacao int32, cidade string) (pgstore.Equipe, error) {
+	return equipe.Update(ctx, s.queries, slug, name, cor, anoFundacao, cidade)
+}
+
+func (s *EquipeService) Delete(ctx context.Context, slug string) error {
+	return equipe.Delete(ctx, s.queries, slug)
+}

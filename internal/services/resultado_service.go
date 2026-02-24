@@ -23,3 +23,15 @@ func (s *ResultadoService) ListByCorrida(ctx context.Context, corridaSlug string
 func (s *ResultadoService) GetByCorridaAndPosicao(ctx context.Context, corridaSlug string, posicao int32) (pgstore.ResultadoCorrida, error) {
 	return resultado.GetByCorridaAndPosicao(ctx, s.queries, corridaSlug, posicao)
 }
+
+func (s *ResultadoService) Create(ctx context.Context, corridaSlug string, posicao int32, pilotoCpf, equipeSlug, melhorVolta, tempoTotal string, pontos int32) (pgstore.ResultadoCorrida, error) {
+	return resultado.Create(ctx, s.queries, corridaSlug, posicao, pilotoCpf, equipeSlug, melhorVolta, tempoTotal, pontos)
+}
+
+func (s *ResultadoService) Update(ctx context.Context, corridaSlug string, posicao int32, pilotoCpf, equipeSlug, melhorVolta, tempoTotal string, pontos int32) (pgstore.ResultadoCorrida, error) {
+	return resultado.Update(ctx, s.queries, corridaSlug, posicao, pilotoCpf, equipeSlug, melhorVolta, tempoTotal, pontos)
+}
+
+func (s *ResultadoService) Delete(ctx context.Context, corridaSlug string, posicao int32) error {
+	return resultado.Delete(ctx, s.queries, corridaSlug, posicao)
+}

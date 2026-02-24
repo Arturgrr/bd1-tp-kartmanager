@@ -51,6 +51,15 @@ func (q *Queries) CreatePiloto(ctx context.Context, arg CreatePilotoParams) (Pil
 	return i, err
 }
 
+const deletePiloto = `-- name: DeletePiloto :exec
+DELETE FROM piloto WHERE cpf = $1
+`
+
+func (q *Queries) DeletePiloto(ctx context.Context, cpf string) error {
+	_, err := q.db.Exec(ctx, deletePiloto, cpf)
+	return err
+}
+
 const getPilotoByCpf = `-- name: GetPilotoByCpf :one
 SELECT cpf, nome, slug, numero, ano_nascimento, cidade, equipe_slug, categoria_slug
 FROM piloto
@@ -200,4 +209,47 @@ func (q *Queries) ListPilotosByEquipe(ctx context.Context, equipeSlug string) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const updatePiloto = `-- name: UpdatePiloto :one
+UPDATE piloto
+SET nome = $2, slug = $3, numero = $4, ano_nascimento = $5, cidade = $6, equipe_slug = $7, categoria_slug = $8
+WHERE cpf = $1
+RETURNING cpf, nome, slug, numero, ano_nascimento, cidade, equipe_slug, categoria_slug
+`
+
+type UpdatePilotoParams struct {
+	Cpf           string `json:"cpf"`
+	Nome          string `json:"nome"`
+	Slug          string `json:"slug"`
+	Numero        int32  `json:"numero"`
+	AnoNascimento int32  `json:"ano_nascimento"`
+	Cidade        string `json:"cidade"`
+	EquipeSlug    string `json:"equipe_slug"`
+	CategoriaSlug string `json:"categoria_slug"`
+}
+
+func (q *Queries) UpdatePiloto(ctx context.Context, arg UpdatePilotoParams) (Piloto, error) {
+	row := q.db.QueryRow(ctx, updatePiloto,
+		arg.Cpf,
+		arg.Nome,
+		arg.Slug,
+		arg.Numero,
+		arg.AnoNascimento,
+		arg.Cidade,
+		arg.EquipeSlug,
+		arg.CategoriaSlug,
+	)
+	var i Piloto
+	err := row.Scan(
+		&i.Cpf,
+		&i.Nome,
+		&i.Slug,
+		&i.Numero,
+		&i.AnoNascimento,
+		&i.Cidade,
+		&i.EquipeSlug,
+		&i.CategoriaSlug,
+	)
+	return i, err
 }

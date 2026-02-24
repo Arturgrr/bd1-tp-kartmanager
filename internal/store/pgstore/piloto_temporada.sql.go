@@ -56,6 +56,21 @@ func (q *Queries) CreatePilotoTemporada(ctx context.Context, arg CreatePilotoTem
 	return i, err
 }
 
+const deletePilotoTemporada = `-- name: DeletePilotoTemporada :exec
+DELETE FROM piloto_temporada WHERE piloto_cpf = $1 AND temporada = $2 AND categoria_slug = $3
+`
+
+type DeletePilotoTemporadaParams struct {
+	PilotoCpf     string `json:"piloto_cpf"`
+	Temporada     string `json:"temporada"`
+	CategoriaSlug string `json:"categoria_slug"`
+}
+
+func (q *Queries) DeletePilotoTemporada(ctx context.Context, arg DeletePilotoTemporadaParams) error {
+	_, err := q.db.Exec(ctx, deletePilotoTemporada, arg.PilotoCpf, arg.Temporada, arg.CategoriaSlug)
+	return err
+}
+
 const getPilotoTemporada = `-- name: GetPilotoTemporada :one
 SELECT piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, podios, melhor_volta, posicao
 FROM piloto_temporada
@@ -162,4 +177,50 @@ func (q *Queries) ListStandingsByCategoriaAndTemporada(ctx context.Context, arg 
 		return nil, err
 	}
 	return items, nil
+}
+
+const updatePilotoTemporada = `-- name: UpdatePilotoTemporada :one
+UPDATE piloto_temporada
+SET equipe_slug = $4, pontos = $5, vitorias = $6, podios = $7, melhor_volta = $8, posicao = $9
+WHERE piloto_cpf = $1 AND temporada = $2 AND categoria_slug = $3
+RETURNING piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, podios, melhor_volta, posicao
+`
+
+type UpdatePilotoTemporadaParams struct {
+	PilotoCpf     string      `json:"piloto_cpf"`
+	Temporada     string      `json:"temporada"`
+	CategoriaSlug string      `json:"categoria_slug"`
+	EquipeSlug    string      `json:"equipe_slug"`
+	Pontos        int32       `json:"pontos"`
+	Vitorias      int32       `json:"vitorias"`
+	Podios        int32       `json:"podios"`
+	MelhorVolta   pgtype.Text `json:"melhor_volta"`
+	Posicao       int32       `json:"posicao"`
+}
+
+func (q *Queries) UpdatePilotoTemporada(ctx context.Context, arg UpdatePilotoTemporadaParams) (PilotoTemporada, error) {
+	row := q.db.QueryRow(ctx, updatePilotoTemporada,
+		arg.PilotoCpf,
+		arg.Temporada,
+		arg.CategoriaSlug,
+		arg.EquipeSlug,
+		arg.Pontos,
+		arg.Vitorias,
+		arg.Podios,
+		arg.MelhorVolta,
+		arg.Posicao,
+	)
+	var i PilotoTemporada
+	err := row.Scan(
+		&i.PilotoCpf,
+		&i.Temporada,
+		&i.CategoriaSlug,
+		&i.EquipeSlug,
+		&i.Pontos,
+		&i.Vitorias,
+		&i.Podios,
+		&i.MelhorVolta,
+		&i.Posicao,
+	)
+	return i, err
 }

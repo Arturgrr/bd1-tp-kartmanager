@@ -50,6 +50,15 @@ func (q *Queries) CreateCorrida(ctx context.Context, arg CreateCorridaParams) (C
 	return i, err
 }
 
+const deleteCorrida = `-- name: DeleteCorrida :exec
+DELETE FROM corrida WHERE slug = $1
+`
+
+func (q *Queries) DeleteCorrida(ctx context.Context, slug string) error {
+	_, err := q.db.Exec(ctx, deleteCorrida, slug)
+	return err
+}
+
 const getCorridaBySlug = `-- name: GetCorridaBySlug :one
 SELECT slug, nome, data, pista, categoria_slug, temporada, status
 FROM corrida
@@ -208,4 +217,44 @@ func (q *Queries) ListCorridasUpcoming(ctx context.Context) ([]Corrida, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateCorrida = `-- name: UpdateCorrida :one
+UPDATE corrida
+SET nome = $2, data = $3, pista = $4, categoria_slug = $5, temporada = $6, status = $7
+WHERE slug = $1
+RETURNING slug, nome, data, pista, categoria_slug, temporada, status
+`
+
+type UpdateCorridaParams struct {
+	Slug          string      `json:"slug"`
+	Nome          string      `json:"nome"`
+	Data          pgtype.Date `json:"data"`
+	Pista         string      `json:"pista"`
+	CategoriaSlug string      `json:"categoria_slug"`
+	Temporada     string      `json:"temporada"`
+	Status        string      `json:"status"`
+}
+
+func (q *Queries) UpdateCorrida(ctx context.Context, arg UpdateCorridaParams) (Corrida, error) {
+	row := q.db.QueryRow(ctx, updateCorrida,
+		arg.Slug,
+		arg.Nome,
+		arg.Data,
+		arg.Pista,
+		arg.CategoriaSlug,
+		arg.Temporada,
+		arg.Status,
+	)
+	var i Corrida
+	err := row.Scan(
+		&i.Slug,
+		&i.Nome,
+		&i.Data,
+		&i.Pista,
+		&i.CategoriaSlug,
+		&i.Temporada,
+		&i.Status,
+	)
+	return i, err
 }

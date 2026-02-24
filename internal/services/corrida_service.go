@@ -35,3 +35,15 @@ func (s *CorridaService) ListUpcoming(ctx context.Context) ([]pgstore.Corrida, e
 func (s *CorridaService) ListByCategoria(ctx context.Context, categoriaSlug string) ([]pgstore.Corrida, error) {
 	return corrida.ListByCategoria(ctx, s.queries, categoriaSlug)
 }
+
+func (s *CorridaService) Create(ctx context.Context, slug, name, dateStr, track, categorySlug, season, status string) (pgstore.Corrida, error) {
+	return corrida.Create(ctx, s.queries, slug, name, dateStr, track, categorySlug, season, status)
+}
+
+func (s *CorridaService) Update(ctx context.Context, slug, name, dateStr, track, categorySlug, season, status string) (pgstore.Corrida, error) {
+	return corrida.Update(ctx, s.queries, slug, name, dateStr, track, categorySlug, season, status)
+}
+
+func (s *CorridaService) Delete(ctx context.Context, slug string) error {
+	return corrida.Delete(ctx, s.queries, slug)
+}

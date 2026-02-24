@@ -42,6 +42,15 @@ func (q *Queries) CreateEquipe(ctx context.Context, arg CreateEquipeParams) (Equ
 	return i, err
 }
 
+const deleteEquipe = `-- name: DeleteEquipe :exec
+DELETE FROM equipe WHERE slug = $1
+`
+
+func (q *Queries) DeleteEquipe(ctx context.Context, slug string) error {
+	_, err := q.db.Exec(ctx, deleteEquipe, slug)
+	return err
+}
+
 const getEquipeBySlug = `-- name: GetEquipeBySlug :one
 SELECT slug, nome, cor, ano_fundacao, cidade
 FROM equipe
@@ -91,4 +100,38 @@ func (q *Queries) ListEquipes(ctx context.Context) ([]Equipe, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateEquipe = `-- name: UpdateEquipe :one
+UPDATE equipe
+SET nome = $2, cor = $3, ano_fundacao = $4, cidade = $5
+WHERE slug = $1
+RETURNING slug, nome, cor, ano_fundacao, cidade
+`
+
+type UpdateEquipeParams struct {
+	Slug        string `json:"slug"`
+	Nome        string `json:"nome"`
+	Cor         string `json:"cor"`
+	AnoFundacao int32  `json:"ano_fundacao"`
+	Cidade      string `json:"cidade"`
+}
+
+func (q *Queries) UpdateEquipe(ctx context.Context, arg UpdateEquipeParams) (Equipe, error) {
+	row := q.db.QueryRow(ctx, updateEquipe,
+		arg.Slug,
+		arg.Nome,
+		arg.Cor,
+		arg.AnoFundacao,
+		arg.Cidade,
+	)
+	var i Equipe
+	err := row.Scan(
+		&i.Slug,
+		&i.Nome,
+		&i.Cor,
+		&i.AnoFundacao,
+		&i.Cidade,
+	)
+	return i, err
 }

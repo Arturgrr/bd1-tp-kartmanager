@@ -48,6 +48,20 @@ func (q *Queries) CreateResultadoCorrida(ctx context.Context, arg CreateResultad
 	return i, err
 }
 
+const deleteResultadoCorrida = `-- name: DeleteResultadoCorrida :exec
+DELETE FROM resultado_corrida WHERE corrida_slug = $1 AND posicao = $2
+`
+
+type DeleteResultadoCorridaParams struct {
+	CorridaSlug string `json:"corrida_slug"`
+	Posicao     int32  `json:"posicao"`
+}
+
+func (q *Queries) DeleteResultadoCorrida(ctx context.Context, arg DeleteResultadoCorridaParams) error {
+	_, err := q.db.Exec(ctx, deleteResultadoCorrida, arg.CorridaSlug, arg.Posicao)
+	return err
+}
+
 const getResultadoByCorridaAndPosicao = `-- name: GetResultadoByCorridaAndPosicao :one
 SELECT corrida_slug, posicao, piloto_cpf, equipe_slug, melhor_volta, tempo_total, pontos
 FROM resultado_corrida
@@ -107,4 +121,44 @@ func (q *Queries) ListResultadosByCorrida(ctx context.Context, corridaSlug strin
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateResultadoCorrida = `-- name: UpdateResultadoCorrida :one
+UPDATE resultado_corrida
+SET piloto_cpf = $3, equipe_slug = $4, melhor_volta = $5, tempo_total = $6, pontos = $7
+WHERE corrida_slug = $1 AND posicao = $2
+RETURNING corrida_slug, posicao, piloto_cpf, equipe_slug, melhor_volta, tempo_total, pontos
+`
+
+type UpdateResultadoCorridaParams struct {
+	CorridaSlug string `json:"corrida_slug"`
+	Posicao     int32  `json:"posicao"`
+	PilotoCpf   string `json:"piloto_cpf"`
+	EquipeSlug  string `json:"equipe_slug"`
+	MelhorVolta string `json:"melhor_volta"`
+	TempoTotal  string `json:"tempo_total"`
+	Pontos      int32  `json:"pontos"`
+}
+
+func (q *Queries) UpdateResultadoCorrida(ctx context.Context, arg UpdateResultadoCorridaParams) (ResultadoCorrida, error) {
+	row := q.db.QueryRow(ctx, updateResultadoCorrida,
+		arg.CorridaSlug,
+		arg.Posicao,
+		arg.PilotoCpf,
+		arg.EquipeSlug,
+		arg.MelhorVolta,
+		arg.TempoTotal,
+		arg.Pontos,
+	)
+	var i ResultadoCorrida
+	err := row.Scan(
+		&i.CorridaSlug,
+		&i.Posicao,
+		&i.PilotoCpf,
+		&i.EquipeSlug,
+		&i.MelhorVolta,
+		&i.TempoTotal,
+		&i.Pontos,
+	)
+	return i, err
 }

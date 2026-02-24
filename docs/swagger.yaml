@@ -1,5 +1,192 @@
 basePath: /api/v1
 definitions:
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_admin.LoginAdminReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_categoria.CreateCategoriaReq:
+    properties:
+      description:
+        type: string
+      maxAge:
+        type: integer
+      minAge:
+        type: integer
+      name:
+        type: string
+      slug:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_categoria.UpdateCategoriaReq:
+    properties:
+      description:
+        type: string
+      maxAge:
+        type: integer
+      minAge:
+        type: integer
+      name:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_corrida.CreateCorridaReq:
+    properties:
+      categorySlug:
+        type: string
+      date:
+        type: string
+      name:
+        type: string
+      season:
+        type: string
+      slug:
+        type: string
+      status:
+        type: string
+      track:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_corrida.UpdateCorridaReq:
+    properties:
+      categorySlug:
+        type: string
+      date:
+        type: string
+      name:
+        type: string
+      season:
+        type: string
+      status:
+        type: string
+      track:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_equipe.CreateEquipeReq:
+    properties:
+      city:
+        type: string
+      color:
+        type: string
+      foundedYear:
+        type: integer
+      name:
+        type: string
+      slug:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_equipe.UpdateEquipeReq:
+    properties:
+      city:
+        type: string
+      color:
+        type: string
+      foundedYear:
+        type: integer
+      name:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_piloto.CreatePilotoReq:
+    properties:
+      birthYear:
+        type: integer
+      categorySlug:
+        type: string
+      city:
+        type: string
+      cpf:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+      slug:
+        type: string
+      teamSlug:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_piloto.UpdatePilotoReq:
+    properties:
+      birthYear:
+        type: integer
+      categorySlug:
+        type: string
+      city:
+        type: string
+      name:
+        type: string
+      number:
+        type: integer
+      slug:
+        type: string
+      teamSlug:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_resultado.CreateResultadoReq:
+    properties:
+      equipeSlug:
+        type: string
+      melhorVolta:
+        type: string
+      pilotoCpf:
+        type: string
+      pontos:
+        type: integer
+      posicao:
+        type: integer
+      tempoTotal:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_resultado.UpdateResultadoReq:
+    properties:
+      equipeSlug:
+        type: string
+      melhorVolta:
+        type: string
+      pilotoCpf:
+        type: string
+      pontos:
+        type: integer
+      tempoTotal:
+        type: string
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_standings.CreatePilotoTemporadaReq:
+    properties:
+      categoriaSlug:
+        type: string
+      equipeSlug:
+        type: string
+      melhorVolta:
+        type: string
+      pilotoCpf:
+        type: string
+      podios:
+        type: integer
+      pontos:
+        type: integer
+      posicao:
+        type: integer
+      temporada:
+        type: string
+      vitorias:
+        type: integer
+    type: object
+  github_com_arturgrr_bd1-kartmanager_internal_use-cases_standings.UpdatePilotoTemporadaReq:
+    properties:
+      equipeSlug:
+        type: string
+      melhorVolta:
+        type: string
+      podios:
+        type: integer
+      pontos:
+        type: integer
+      posicao:
+        type: integer
+      vitorias:
+        type: integer
+    type: object
   internal_api.categoriaResponse:
     properties:
       description:
@@ -110,6 +297,897 @@ info:
   title: UFOPKART API
   version: v1
 paths:
+  /admin/categorias:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_categoria.CreateCategoriaReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.categoriaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria categoria (admin)
+      tags:
+      - admin-categorias
+  /admin/categorias/{slug}:
+    delete:
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove categoria (admin)
+      tags:
+      - admin-categorias
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_categoria.UpdateCategoriaReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.categoriaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza categoria (admin)
+      tags:
+      - admin-categorias
+  /admin/corridas:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_corrida.CreateCorridaReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.corridaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria corrida (admin)
+      tags:
+      - admin-corridas
+  /admin/corridas/{slug}:
+    delete:
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove corrida (admin)
+      tags:
+      - admin-corridas
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_corrida.UpdateCorridaReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.corridaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza corrida (admin)
+      tags:
+      - admin-corridas
+  /admin/corridas/{slug}/resultados:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Slug da corrida
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_resultado.CreateResultadoReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.raceResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria resultado de corrida (admin)
+      tags:
+      - admin-resultados
+  /admin/corridas/{slug}/resultados/{posicao}:
+    delete:
+      parameters:
+      - description: Slug da corrida
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Posição
+        in: path
+        name: posicao
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove resultado de corrida (admin)
+      tags:
+      - admin-resultados
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Slug da corrida
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Posição
+        in: path
+        name: posicao
+        required: true
+        type: integer
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_resultado.UpdateResultadoReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.raceResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza resultado de corrida (admin)
+      tags:
+      - admin-resultados
+  /admin/equipes:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_equipe.CreateEquipeReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.equipeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria equipe (admin)
+      tags:
+      - admin-equipes
+  /admin/equipes/{slug}:
+    delete:
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove equipe (admin)
+      tags:
+      - admin-equipes
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_equipe.UpdateEquipeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.equipeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza equipe (admin)
+      tags:
+      - admin-equipes
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email e senha
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_admin.LoginAdminReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login admin
+      tags:
+      - admin
+  /admin/pilotos:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_piloto.CreatePilotoReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.pilotoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria piloto (admin)
+      tags:
+      - admin-pilotos
+  /admin/pilotos/{slug}:
+    delete:
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove piloto (admin)
+      tags:
+      - admin-pilotos
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_piloto.UpdatePilotoReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.pilotoResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza piloto (admin)
+      tags:
+      - admin-pilotos
+  /admin/standings:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_standings.CreatePilotoTemporadaReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_api.standingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Cria entrada piloto temporada (admin)
+      tags:
+      - admin-standings
+  /admin/standings/{pilotoCpf}/{temporada}/{categoriaSlug}:
+    delete:
+      parameters:
+      - description: CPF do piloto
+        in: path
+        name: pilotoCpf
+        required: true
+        type: string
+      - description: Temporada
+        in: path
+        name: temporada
+        required: true
+        type: string
+      - description: Slug da categoria
+        in: path
+        name: categoriaSlug
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove piloto temporada (admin)
+      tags:
+      - admin-standings
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: CPF do piloto
+        in: path
+        name: pilotoCpf
+        required: true
+        type: string
+      - description: Temporada
+        in: path
+        name: temporada
+        required: true
+        type: string
+      - description: Slug da categoria
+        in: path
+        name: categoriaSlug
+        required: true
+        type: string
+      - description: Body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_arturgrr_bd1-kartmanager_internal_use-cases_standings.UpdatePilotoTemporadaReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.standingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: Unprocessable Entity
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualiza piloto temporada (admin)
+      tags:
+      - admin-standings
   /categorias:
     get:
       produces:

@@ -29,3 +29,12 @@ ORDER BY nome;
 INSERT INTO piloto (cpf, nome, slug, numero, ano_nascimento, cidade, equipe_slug, categoria_slug)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 RETURNING cpf, nome, slug, numero, ano_nascimento, cidade, equipe_slug, categoria_slug;
+
+-- name: UpdatePiloto :one
+UPDATE piloto
+SET nome = $2, slug = $3, numero = $4, ano_nascimento = $5, cidade = $6, equipe_slug = $7, categoria_slug = $8
+WHERE cpf = $1
+RETURNING cpf, nome, slug, numero, ano_nascimento, cidade, equipe_slug, categoria_slug;
+
+-- name: DeletePiloto :exec
+DELETE FROM piloto WHERE cpf = $1;

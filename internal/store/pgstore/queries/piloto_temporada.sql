@@ -19,3 +19,12 @@ ORDER BY temporada DESC, categoria_slug;
 INSERT INTO piloto_temporada (piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, podios, melhor_volta, posicao)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 RETURNING piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, podios, melhor_volta, posicao;
+
+-- name: UpdatePilotoTemporada :one
+UPDATE piloto_temporada
+SET equipe_slug = $4, pontos = $5, vitorias = $6, podios = $7, melhor_volta = $8, posicao = $9
+WHERE piloto_cpf = $1 AND temporada = $2 AND categoria_slug = $3
+RETURNING piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, podios, melhor_volta, posicao;
+
+-- name: DeletePilotoTemporada :exec
+DELETE FROM piloto_temporada WHERE piloto_cpf = $1 AND temporada = $2 AND categoria_slug = $3;
