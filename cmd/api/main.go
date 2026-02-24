@@ -10,6 +10,10 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title			UFOPKART API
+// @version		v1
+// @description	API do sistema UFOPKART (categorias, equipes, pilotos, corridas).
+// @BasePath		/api/v1
 func main() {
 	if err := godotenv.Load(); err != nil {
 		panic(err)

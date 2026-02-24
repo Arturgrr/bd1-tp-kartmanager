@@ -11,6 +11,9 @@ migrate:
 sqlc-generate:
 	@cd internal/store/pgstore && sqlc generate
 
+swagger:
+	@swag init -g cmd/api/main.go -o docs --parseDependency --parseInternal
+
 watch:
 	@if command -v air > /dev/null; then \
             air; \

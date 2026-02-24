@@ -1,0 +1,94 @@
+basePath: /api/v1
+definitions:
+  internal_api.categoriaResponse:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      maxAge:
+        type: integer
+      minAge:
+        type: integer
+      name:
+        type: string
+      slug:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: API do sistema UFOPKART (categorias, equipes, pilotos, corridas).
+  title: UFOPKART API
+  version: v1
+paths:
+  /categorias:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.categoriaResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista todas as categorias
+      tags:
+      - categorias
+  /categorias/{slug}:
+    get:
+      parameters:
+      - description: Slug da categoria
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.categoriaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca categoria por slug
+      tags:
+      - categorias
+  /health:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status, version
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+swagger: "2.0"
