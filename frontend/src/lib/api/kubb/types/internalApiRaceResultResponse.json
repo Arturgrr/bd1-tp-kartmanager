@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "bestLap": { "type": "string" },
+    "pilotId": { "type": "string" },
+    "points": { "type": "integer" },
+    "position": { "type": "integer" },
+    "teamId": { "type": "string" },
+    "totalTime": { "type": "string" }
+  },
+  "x-readme-ref-name": "internal_api.raceResultResponse"
+}

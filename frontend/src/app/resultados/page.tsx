@@ -2,11 +2,12 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import {
-  getCompletedRaces,
-  getCategoryById,
-  getPilotById,
-  getTeamById,
-} from "@/lib/mock-data"
+  fetchCategorias,
+  fetchCorridasCompleted,
+  fetchEquipes,
+  fetchPilotos,
+  fetchResultadosByCorrida,
+} from "@/lib/api"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -15,8 +16,25 @@ export const metadata: Metadata = {
   title: "Resultados",
 }
 
-export default function ResultadosPage() {
-  const completedRaces = getCompletedRaces()
+export default async function ResultadosPage() {
+  const [completedRaces, categories, pilots, teams] = await Promise.all([
+    fetchCorridasCompleted(),
+    fetchCategorias(),
+    fetchPilotos(),
+    fetchEquipes(),
+  ])
+
+  const categoryBySlug = new Map(categories.map((c) => [c.slug, c]))
+  const pilotByCpf = new Map(pilots.map((p) => [p.cpf, p]))
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
+
+  const podiumBySlug: Record<string, { position: number; pilotId: string; teamId: string; bestLap: string }[]> = {}
+  await Promise.all(
+    completedRaces.map(async (race) => {
+      const results = await fetchResultadosByCorrida(race.slug)
+      podiumBySlug[race.slug] = results.slice(0, 3)
+    })
+  )
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -27,8 +45,8 @@ export default function ResultadosPage() {
 
       <div className="mt-8 flex flex-col gap-4">
         {completedRaces.map((race) => {
-          const category = getCategoryById(race.categoryId)
-          const podium = race.results?.slice(0, 3) || []
+          const category = categoryBySlug.get(race.categoryId)
+          const podium = podiumBySlug[race.slug] ?? []
           return (
             <Link key={race.id} href={`/resultados/${race.slug}`}>
               <Card className="border-border bg-card transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5">
@@ -52,8 +70,8 @@ export default function ResultadosPage() {
                   </div>
                   <div className="flex items-center gap-6">
                     {podium.map((result, idx) => {
-                      const pilot = getPilotById(result.pilotId)
-                      const team = getTeamById(result.teamId)
+                      const pilot = pilotByCpf.get(result.pilotId)
+                      const team = teamBySlug.get(result.teamId)
                       const positionColors = ["text-gold", "text-silver", "text-bronze"]
                       return (
                         <div key={result.position} className="flex items-center gap-2">

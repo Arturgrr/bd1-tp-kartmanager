@@ -1,11 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  getUpcomingRaces,
-  getCompletedRaces,
-  getCategoryById,
-  categories,
-} from "@/lib/mock-data"
+import { fetchCategorias, fetchCorridasCompleted, fetchCorridasUpcoming } from "@/lib/api"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -14,9 +9,14 @@ export const metadata: Metadata = {
   title: "Calendario",
 }
 
-export default function CalendarioPage() {
-  const upcomingRaces = getUpcomingRaces()
-  const completedRaces = getCompletedRaces()
+export default async function CalendarioPage() {
+  const [upcomingRaces, completedRaces, categories] = await Promise.all([
+    fetchCorridasUpcoming(),
+    fetchCorridasCompleted(),
+    fetchCategorias(),
+  ])
+
+  const categoryBySlug = new Map(categories.map((c) => [c.slug, c]))
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -32,7 +32,7 @@ export default function CalendarioPage() {
         ) : (
           <div className="flex flex-col gap-3">
             {upcomingRaces.map((race) => {
-              const category = getCategoryById(race.categoryId)
+              const category = categoryBySlug.get(race.categoryId)
               return (
                 <Card key={race.id} className="border-border bg-card">
                   <CardContent className="flex flex-col gap-3 py-4 md:flex-row md:items-center md:justify-between">
@@ -66,8 +66,8 @@ export default function CalendarioPage() {
         <h2 className="mb-4 font-serif text-xl font-bold uppercase text-foreground">Por Categoria</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {categories.map((cat) => {
-            const catUpcoming = upcomingRaces.filter(r => r.categoryId === cat.id)
-            const catCompleted = completedRaces.filter(r => r.categoryId === cat.id)
+            const catUpcoming = upcomingRaces.filter((r) => r.categoryId === cat.slug)
+            const catCompleted = completedRaces.filter((r) => r.categoryId === cat.slug)
             return (
               <Card key={cat.id} className="border-border bg-card">
                 <CardHeader>

@@ -11,11 +11,12 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  races,
-  getCategoryById,
-  getPilotById,
-  getTeamById,
-} from "@/lib/mock-data"
+  fetchCategorias,
+  fetchCorridaBySlug,
+  fetchEquipes,
+  fetchPilotos,
+  fetchResultadosByCorrida,
+} from "@/lib/api"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import type { Metadata } from "next"
@@ -23,21 +24,25 @@ import { ArrowLeft, Trophy } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const race = races.find((r) => r.slug === slug)
-  return { title: race?.name || "Resultado" }
-}
-
-export function generateStaticParams() {
-  return races.filter((r) => r.status === "completed").map((r) => ({ slug: r.slug }))
+  const race = await fetchCorridaBySlug(slug)
+  return { title: race?.name ?? "Resultado" }
 }
 
 export default async function ResultadoDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const race = races.find((r) => r.slug === slug)
-  if (!race || race.status !== "completed" || !race.results) notFound()
+  const [race, results, categories, pilots, teams] = await Promise.all([
+    fetchCorridaBySlug(slug),
+    fetchResultadosByCorrida(slug),
+    fetchCategorias(),
+    fetchPilotos(),
+    fetchEquipes(),
+  ])
+  if (!race || race.status !== "completed") notFound()
 
-  const category = getCategoryById(race.categoryId)
-  const sortedResults = [...race.results].sort((a, b) => a.position - b.position)
+  const category = categories.find((c) => c.slug === race.categoryId)
+  const pilotByCpf = new Map(pilots.map((p) => [p.cpf, p]))
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
+  const sortedResults = [...results].sort((a, b) => a.position - b.position)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -75,26 +80,26 @@ export default async function ResultadoDetailPage({ params }: { params: Promise<
             </TableHeader>
             <TableBody>
               {sortedResults.map((result) => {
-                const pilot = getPilotById(result.pilotId)
-                const team = getTeamById(result.teamId)
+                const pilot = pilotByCpf.get(result.pilotId)
+                const team = teamBySlug.get(result.teamId)
                 const positionColors: Record<number, string> = { 1: "text-gold", 2: "text-silver", 3: "text-bronze" }
                 return (
                   <TableRow key={result.pilotId} className="border-border">
                     <TableCell>
-                      <span className={`font-serif text-lg font-bold ${positionColors[result.position] || "text-foreground"}`}>
+                      <span className={`font-serif text-lg font-bold ${positionColors[result.position] ?? "text-foreground"}`}>
                         {result.position <= 3 && <Trophy className="mr-1 inline h-3.5 w-3.5" />}
                         {result.position}
                       </span>
                     </TableCell>
                     <TableCell>
-                      <Link href={`/pilotos/${pilot?.slug}`} className="font-medium text-foreground hover:text-primary">
-                        {pilot?.name}
+                      <Link href={`/pilotos/${pilot?.slug ?? ""}`} className="font-medium text-foreground hover:text-primary">
+                        {pilot?.name ?? result.pilotId}
                       </Link>
                     </TableCell>
                     <TableCell>
-                      <Link href={`/equipes/${team?.slug}`} className="flex items-center gap-2 text-muted-foreground hover:text-primary">
+                      <Link href={`/equipes/${team?.slug ?? ""}`} className="flex items-center gap-2 text-muted-foreground hover:text-primary">
                         <div className="h-2 w-2 rounded-full" style={{ backgroundColor: team?.color }} />
-                        {team?.name}
+                        {team?.name ?? result.teamId}
                       </Link>
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">{result.bestLap}</TableCell>

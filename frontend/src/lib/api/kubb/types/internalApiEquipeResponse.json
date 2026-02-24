@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "city": { "type": "string" },
+    "color": { "type": "string" },
+    "foundedYear": { "type": "integer" },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "slug": { "type": "string" }
+  },
+  "x-readme-ref-name": "internal_api.equipeResponse"
+}

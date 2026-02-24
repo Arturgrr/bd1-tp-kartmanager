@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "categoryId": { "type": "string" },
+    "date": { "type": "string" },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "season": { "type": "string" },
+    "slug": { "type": "string" },
+    "status": { "type": "string" },
+    "track": { "type": "string" }
+  },
+  "x-readme-ref-name": "internal_api.corridaResponse"
+}

@@ -10,31 +10,40 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  teams,
-  getPilotsByTeam,
-  getTeamCategories,
-} from "@/lib/mock-data"
+import { fetchCategorias, fetchEquipeBySlug, fetchPilotos, fetchStandings } from "@/lib/api"
 import type { Metadata } from "next"
 import { ArrowLeft } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const team = teams.find((t) => t.slug === slug)
-  return { title: team?.name || "Equipe" }
-}
-
-export function generateStaticParams() {
-  return teams.map((t) => ({ slug: t.slug }))
+  const team = await fetchEquipeBySlug(slug)
+  return { title: team?.name ?? "Equipe" }
 }
 
 export default async function EquipeDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const team = teams.find((t) => t.slug === slug)
+  const [team, pilots, categories] = await Promise.all([
+    fetchEquipeBySlug(slug),
+    fetchPilotos(),
+    fetchCategorias(),
+  ])
   if (!team) notFound()
 
-  const teamPilots = getPilotsByTeam(team.id)
-  const teamCategories = getTeamCategories(team.id)
+  const teamPilots = pilots.filter((p) => p.teamSlug === slug)
+  const teamCategorySlugs = [...new Set(teamPilots.map((p) => p.categorySlug))]
+  const teamCategories = categories.filter((c) => teamCategorySlugs.includes(c.slug))
+
+  const seasons = ["2025", "2024", "2023"]
+  let totalWins = 0
+  let totalPoints = 0
+  for (const cat of teamCategories) {
+    for (const season of seasons) {
+      const standings = await fetchStandings(cat.slug, season)
+      const teamStandings = standings.filter((s) => s.teamId === slug)
+      totalWins += teamStandings.reduce((s, e) => s + e.wins, 0)
+      totalPoints += teamStandings.reduce((s, e) => s + e.points, 0)
+    }
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -82,24 +91,20 @@ export default async function EquipeDetailPage({ params }: { params: Promise<{ s
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="py-4 text-center">
-            <p className="font-serif text-2xl font-bold text-foreground">
-              {teamPilots.reduce((sum, p) => sum + p.seasonsHistory.reduce((s, e) => s + e.wins, 0), 0)}
-            </p>
+            <p className="font-serif text-2xl font-bold text-foreground">{totalWins}</p>
             <p className="text-xs uppercase text-muted-foreground">Vitorias Totais</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card">
           <CardContent className="py-4 text-center">
-            <p className="font-serif text-2xl font-bold text-foreground">
-              {teamPilots.reduce((sum, p) => sum + p.seasonsHistory.reduce((s, e) => s + e.points, 0), 0)}
-            </p>
+            <p className="font-serif text-2xl font-bold text-foreground">{totalPoints}</p>
             <p className="text-xs uppercase text-muted-foreground">Pontos Totais</p>
           </CardContent>
         </Card>
       </div>
 
       {teamCategories.map((cat) => {
-        const catPilots = teamPilots.filter((p) => p.categoryId === cat.id)
+        const catPilots = teamPilots.filter((p) => p.categorySlug === cat.slug)
         if (catPilots.length === 0) return null
         return (
           <section key={cat.id} className="mt-10">
@@ -114,37 +119,31 @@ export default async function EquipeDetailPage({ params }: { params: Promise<{ s
                       <TableHead className="text-muted-foreground">Num.</TableHead>
                       <TableHead className="text-muted-foreground">Nome</TableHead>
                       <TableHead className="text-muted-foreground">Cidade</TableHead>
-                      <TableHead className="text-right text-muted-foreground">Temporadas</TableHead>
                       <TableHead className="text-right text-muted-foreground">Pontos</TableHead>
                       <TableHead className="text-right text-muted-foreground">Vitorias</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {catPilots.map((pilot) => {
-                      const totalPoints = pilot.seasonsHistory.reduce((sum, s) => sum + s.points, 0)
-                      const totalWins = pilot.seasonsHistory.reduce((sum, s) => sum + s.wins, 0)
-                      return (
-                        <TableRow key={pilot.id} className="border-border">
-                          <TableCell>
-                            <div
-                              className="flex h-8 w-8 items-center justify-center rounded font-serif text-sm font-bold"
-                              style={{ backgroundColor: team.color + "20", color: team.color }}
-                            >
-                              {pilot.number}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Link href={`/pilotos/${pilot.slug}`} className="font-medium text-foreground hover:text-primary">
-                              {pilot.name}
-                            </Link>
-                          </TableCell>
-                          <TableCell className="text-muted-foreground">{pilot.city}</TableCell>
-                          <TableCell className="text-right text-foreground">{pilot.seasonsHistory.length}</TableCell>
-                          <TableCell className="text-right font-medium text-foreground">{totalPoints}</TableCell>
-                          <TableCell className="text-right text-foreground">{totalWins}</TableCell>
-                        </TableRow>
-                      )
-                    })}
+                    {catPilots.map((pilot) => (
+                      <TableRow key={pilot.cpf} className="border-border">
+                        <TableCell>
+                          <div
+                            className="flex h-8 w-8 items-center justify-center rounded font-serif text-sm font-bold"
+                            style={{ backgroundColor: team.color + "20", color: team.color }}
+                          >
+                            {pilot.number}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Link href={`/pilotos/${pilot.slug}`} className="font-medium text-foreground hover:text-primary">
+                            {pilot.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{pilot.city}</TableCell>
+                        <TableCell className="text-right font-medium text-foreground">-</TableCell>
+                        <TableCell className="text-right text-foreground">-</TableCell>
+                      </TableRow>
+                    ))}
                   </TableBody>
                 </Table>
               </CardContent>

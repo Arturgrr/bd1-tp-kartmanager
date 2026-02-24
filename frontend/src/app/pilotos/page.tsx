@@ -1,8 +1,7 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { fetchCategorias, fetchPilotos } from "@/lib/api"
-import { getTeamBySlug } from "@/lib/mock-data"
+import { fetchCategorias, fetchEquipes, fetchPilotos } from "@/lib/api"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -10,10 +9,13 @@ export const metadata: Metadata = {
 }
 
 export default async function PilotosPage() {
-  const [pilots, categories] = await Promise.all([
+  const [pilots, categories, teams] = await Promise.all([
     fetchPilotos(),
     fetchCategorias(),
+    fetchEquipes(),
   ])
+
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
@@ -24,7 +26,7 @@ export default async function PilotosPage() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {pilots.map((pilot) => {
-          const team = getTeamBySlug(pilot.teamSlug)
+          const team = teamBySlug.get(pilot.teamSlug)
           const category = categories.find((c) => c.slug === pilot.categorySlug)
           return (
             <Link key={pilot.cpf} href={`/pilotos/${pilot.slug}`}>

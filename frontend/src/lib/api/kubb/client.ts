@@ -1,7 +1,7 @@
 export type RequestConfig<TData = unknown> = {
   url?: string;
   method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE";
-  params?: object;
+  params?: Record<string, string | number | boolean | undefined>;
   data?: TData;
   responseType?: "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
   signal?: AbortSignal;
@@ -30,10 +30,24 @@ function getBaseURL(): string {
   return "http://localhost:8080/api/v1";
 }
 
+function buildUrl(url: string, params?: Record<string, string | number | boolean | undefined>): string {
+  if (!params || Object.keys(params).length === 0) return url;
+  const search = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== "") search.set(k, String(v));
+  }
+  const q = search.toString();
+  return q ? `${url}${url.includes("?") ? "&" : "?"}${q}` : url;
+}
+
 const defaultClient: Client = async <T>(config: RequestConfig) => {
   const base = getBaseURL();
-  const url = config.url ? `${base}${config.url.startsWith("/") ? config.url : `/${config.url}`}` : base;
-  const res = await fetch(url, {
+  const path = config.url ?? "";
+  const fullUrl = buildUrl(
+    path.startsWith("http") ? path : `${base}${path.startsWith("/") ? path : `/${path}`}`,
+    config.params
+  );
+  const res = await fetch(fullUrl, {
     method: config.method,
     headers: config.headers ?? { "Content-Type": "application/json" },
     signal: config.signal,

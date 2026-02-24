@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "bestLap": { "type": "string" },
+    "categoryId": { "type": "string" },
+    "pilotId": { "type": "string" },
+    "podiums": { "type": "integer" },
+    "points": { "type": "integer" },
+    "position": { "type": "integer" },
+    "season": { "type": "string" },
+    "teamId": { "type": "string" },
+    "wins": { "type": "integer" }
+  },
+  "x-readme-ref-name": "internal_api.standingResponse"
+}

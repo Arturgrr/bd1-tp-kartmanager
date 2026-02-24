@@ -1,4 +1,4 @@
-export type GetPilotosSlugPathParams = {}
+export type GetPilotosSlugPathParams = { slug: string }
 
 /**
  * @description OK

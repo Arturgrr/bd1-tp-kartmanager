@@ -1,5 +1,14 @@
 export { getCategorias } from "./getCategorias";
 export { getCategoriasSlug } from "./getCategoriasSlug";
+export { getCorridas } from "./getCorridas";
+export { getCorridasCompleted } from "./getCorridasCompleted";
+export { getCorridasSlug } from "./getCorridasSlug";
+export { getCorridasSlugResultados } from "./getCorridasSlugResultados";
+export { getCorridasSlugResultadosPosicao } from "./getCorridasSlugResultadosPosicao";
+export { getCorridasUpcoming } from "./getCorridasUpcoming";
+export { getEquipes } from "./getEquipes";
+export { getEquipesSlug } from "./getEquipesSlug";
 export { getHealth } from "./getHealth";
 export { getPilotos } from "./getPilotos";
 export { getPilotosSlug } from "./getPilotosSlug";
+export { getStandings } from "./getStandings";

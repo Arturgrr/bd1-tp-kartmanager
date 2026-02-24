@@ -2,22 +2,48 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
-  categories,
-  getUpcomingRaces,
-  getCompletedRaces,
-  getCategoryById,
-  getPilotById,
-  getTeamById,
-  pilots,
-  teams,
-} from "@/lib/mock-data"
+  fetchCategorias,
+  fetchCorridasCompleted,
+  fetchCorridasUpcoming,
+  fetchEquipes,
+  fetchPilotos,
+  fetchResultadosByCorrida,
+} from "@/lib/api"
+import type { PilotoFromAPI, EquipeFromAPI, RaceResultFromAPI } from "@/lib/api"
 import { ArrowRight, Calendar, Flag, Trophy, Users, Zap } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
-export default function HomePage() {
-  const upcomingRaces = getUpcomingRaces().slice(0, 4)
-  const completedRaces = getCompletedRaces().slice(0, 3)
+function buildMaps(
+  pilots: PilotoFromAPI[],
+  teams: EquipeFromAPI[]
+) {
+  const pilotByCpf = new Map(pilots.map((p) => [p.cpf, p]))
+  const teamBySlug = new Map(teams.map((t) => [t.slug, t]))
+  return { pilotByCpf, teamBySlug }
+}
+
+export default async function HomePage() {
+  const [categories, pilots, teams, upcomingRacesRaw, completedRacesRaw] = await Promise.all([
+    fetchCategorias(),
+    fetchPilotos(),
+    fetchEquipes(),
+    fetchCorridasUpcoming(),
+    fetchCorridasCompleted(),
+  ])
+
+  const upcomingRaces = upcomingRacesRaw.slice(0, 4)
+  const completedRaces = completedRacesRaw.slice(0, 3)
+
+  const resultsBySlug: Record<string, RaceResultFromAPI[]> = {}
+  await Promise.all(
+    completedRaces.map(async (r) => {
+      resultsBySlug[r.slug] = await fetchResultadosByCorrida(r.slug)
+    })
+  )
+
+  const { pilotByCpf, teamBySlug } = buildMaps(pilots, teams)
+  const categoryBySlug = new Map(categories.map((c) => [c.slug, c]))
 
   return (
     <div className="flex flex-col">
@@ -107,7 +133,7 @@ export default function HomePage() {
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {upcomingRaces.map((race) => {
-            const category = getCategoryById(race.categoryId)
+            const category = categoryBySlug.get(race.categoryId)
             return (
               <Card key={race.id} className="border-border bg-card transition-colors hover:border-primary/30">
                 <CardHeader className="pb-2">
@@ -144,8 +170,8 @@ export default function HomePage() {
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {completedRaces.map((race) => {
-              const category = getCategoryById(race.categoryId)
-              const podium = race.results?.slice(0, 3) || []
+              const category = categoryBySlug.get(race.categoryId)
+              const podium = (resultsBySlug[race.slug] ?? []).slice(0, 3)
               return (
                 <Link key={race.id} href={`/resultados/${race.slug}`}>
                   <Card className="border-border bg-card transition-colors hover:border-primary/30">
@@ -163,8 +189,8 @@ export default function HomePage() {
                     <CardContent>
                       <div className="flex flex-col gap-2">
                         {podium.map((result) => {
-                          const pilot = getPilotById(result.pilotId)
-                          const team = getTeamById(result.teamId)
+                          const pilot = pilotByCpf.get(result.pilotId)
+                          const team = teamBySlug.get(result.teamId)
                           const positionColors = ["text-gold", "text-silver", "text-bronze"]
                           return (
                             <div key={result.position} className="flex items-center gap-3">

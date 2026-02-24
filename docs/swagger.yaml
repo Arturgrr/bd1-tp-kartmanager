@@ -15,6 +15,40 @@ definitions:
       slug:
         type: string
     type: object
+  internal_api.corridaResponse:
+    properties:
+      categoryId:
+        type: string
+      date:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      season:
+        type: string
+      slug:
+        type: string
+      status:
+        type: string
+      track:
+        type: string
+    type: object
+  internal_api.equipeResponse:
+    properties:
+      city:
+        type: string
+      color:
+        type: string
+      foundedYear:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+    type: object
   internal_api.pilotoResponse:
     properties:
       birthYear:
@@ -33,6 +67,42 @@ definitions:
         type: string
       teamSlug:
         type: string
+    type: object
+  internal_api.raceResultResponse:
+    properties:
+      bestLap:
+        type: string
+      pilotId:
+        type: string
+      points:
+        type: integer
+      position:
+        type: integer
+      teamId:
+        type: string
+      totalTime:
+        type: string
+    type: object
+  internal_api.standingResponse:
+    properties:
+      bestLap:
+        type: string
+      categoryId:
+        type: string
+      pilotId:
+        type: string
+      podiums:
+        type: integer
+      points:
+        type: integer
+      position:
+        type: integer
+      season:
+        type: string
+      teamId:
+        type: string
+      wins:
+        type: integer
     type: object
 info:
   contact: {}
@@ -96,6 +166,231 @@ paths:
       summary: Busca categoria por slug
       tags:
       - categorias
+  /corridas:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.corridaResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista todas as corridas
+      tags:
+      - corridas
+  /corridas/{slug}:
+    get:
+      parameters:
+      - description: Slug da corrida
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.corridaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca corrida por slug
+      tags:
+      - corridas
+  /corridas/{slug}/resultados:
+    get:
+      parameters:
+      - description: Slug da corrida
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.raceResultResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista resultados de uma corrida
+      tags:
+      - resultados
+  /corridas/{slug}/resultados/{posicao}:
+    get:
+      parameters:
+      - description: Slug da corrida
+        in: path
+        name: slug
+        required: true
+        type: string
+      - description: Posição do piloto
+        in: path
+        name: posicao
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.raceResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca resultado de uma corrida por posição
+      tags:
+      - resultados
+  /corridas/completed:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.corridaResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista corridas finalizadas
+      tags:
+      - corridas
+  /corridas/upcoming:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.corridaResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista corridas futuras
+      tags:
+      - corridas
+  /equipes:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.equipeResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista todas as equipes
+      tags:
+      - equipes
+  /equipes/{slug}:
+    get:
+      parameters:
+      - description: Slug da equipe
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.equipeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Busca equipe por slug
+      tags:
+      - equipes
   /health:
     get:
       produces:
@@ -166,4 +461,41 @@ paths:
       summary: Busca piloto por slug
       tags:
       - pilotos
+  /standings:
+    get:
+      parameters:
+      - description: Slug da categoria
+        in: query
+        name: categoriaSlug
+        required: true
+        type: string
+      - description: Temporada
+        in: query
+        name: temporada
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_api.standingResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Lista standings por categoria e temporada
+      tags:
+      - standings
 swagger: "2.0"

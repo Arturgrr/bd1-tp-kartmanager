@@ -1,4 +1,4 @@
-export type GetCategoriasSlugPathParams = {}
+export type GetCategoriasSlugPathParams = { slug: string }
 
 /**
  * @description OK
