@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/categorias", label: "Categorias" },
   { href: "/calendario", label: "Calendario" },
   { href: "/resultados", label: "Resultados" },
+  { href: "/admin/login", label: "Admin" },
 ]
 
 export function SiteHeader() {

@@ -28,3 +28,6 @@ RETURNING piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, 
 
 -- name: DeletePilotoTemporada :exec
 DELETE FROM piloto_temporada WHERE piloto_cpf = $1 AND temporada = $2 AND categoria_slug = $3;
+
+-- name: CountPilotoTemporada :one
+SELECT COUNT(*) FROM piloto_temporada;

@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "equipeSlug": { "type": "string" },
+    "melhorVolta": { "type": "string" },
+    "pilotoCpf": { "type": "string" },
+    "pontos": { "type": "integer" },
+    "tempoTotal": { "type": "string" }
+  },
+  "x-readme-ref-name": "github_com_arturgrr_bd1-kartmanager_internal_use-cases_resultado.UpdateResultadoReq"
+}

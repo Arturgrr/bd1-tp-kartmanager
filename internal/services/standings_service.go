@@ -35,3 +35,7 @@ func (s *StandingsService) Update(ctx context.Context, pilotoCpf, temporada, cat
 func (s *StandingsService) Delete(ctx context.Context, pilotoCpf, temporada, categoriaSlug string) error {
 	return standings.Delete(ctx, s.queries, pilotoCpf, temporada, categoriaSlug)
 }
+
+func (s *StandingsService) Count(ctx context.Context) (int64, error) {
+	return s.queries.CountPilotoTemporada(ctx)
+}

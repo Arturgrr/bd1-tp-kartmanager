@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "categoriaSlug": { "type": "string" },
+    "equipeSlug": { "type": "string" },
+    "melhorVolta": { "type": "string" },
+    "pilotoCpf": { "type": "string" },
+    "podios": { "type": "integer" },
+    "pontos": { "type": "integer" },
+    "posicao": { "type": "integer" },
+    "temporada": { "type": "string" },
+    "vitorias": { "type": "integer" }
+  },
+  "x-readme-ref-name": "github_com_arturgrr_bd1-kartmanager_internal_use-cases_standings.CreatePilotoTemporadaReq"
+}

@@ -187,6 +187,19 @@ definitions:
       vitorias:
         type: integer
     type: object
+  internal_api.adminSummaryResponse:
+    properties:
+      categorias:
+        type: integer
+      corridas:
+        type: integer
+      equipes:
+        type: integer
+      pilotos:
+        type: integer
+      standings:
+        type: integer
+    type: object
   internal_api.categoriaResponse:
     properties:
       description:
@@ -1188,6 +1201,30 @@ paths:
       summary: Atualiza piloto temporada (admin)
       tags:
       - admin-standings
+  /admin/summary:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_api.adminSummaryResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Resumo do dashboard admin (contagens)
+      tags:
+      - admin
   /categorias:
     get:
       produces:

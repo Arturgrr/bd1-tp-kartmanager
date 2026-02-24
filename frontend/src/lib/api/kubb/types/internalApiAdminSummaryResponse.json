@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "categorias": { "type": "integer" },
+    "corridas": { "type": "integer" },
+    "equipes": { "type": "integer" },
+    "pilotos": { "type": "integer" },
+    "standings": { "type": "integer" }
+  },
+  "x-readme-ref-name": "internal_api.adminSummaryResponse"
+}

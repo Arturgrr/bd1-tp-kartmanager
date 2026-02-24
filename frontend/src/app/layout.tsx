@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Barlow, Barlow_Condensed } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
+import { LayoutShell } from "@/components/layout-shell"
 import "./globals.css"
 
 const barlow = Barlow({
@@ -40,11 +39,7 @@ export default function RootLayout({
       <body
         className={`${barlow.variable} ${barlowCondensed.variable} font-sans antialiased`}
       >
-        <div className="flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
+        <LayoutShell>{children}</LayoutShell>
         <Analytics />
       </body>
     </html>

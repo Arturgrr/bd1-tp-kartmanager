@@ -1,4 +1,4 @@
-export type GetCorridasSlugPathParams = { slug: string }
+export type GetCorridasSlugPathParams = {}
 
 /**
  * @description OK

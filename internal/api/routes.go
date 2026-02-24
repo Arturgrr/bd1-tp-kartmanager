@@ -11,7 +11,7 @@ import (
 )
 
 func (api *API) BindRoutes() {
-	api.router.Use(requestid.New(), gin.Logger(), gin.Recovery())
+	api.router.Use(corsMiddleware(), requestid.New(), gin.Logger(), gin.Recovery())
 	store := cookie.NewStore(api.sessionSecret)
 	api.router.Use(sessions.Sessions("gpmanager_session", store))
 	api.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -19,6 +19,7 @@ func (api *API) BindRoutes() {
 	v1.GET("/health", api.handleHealth)
 	v1.POST("/admin/login", api.handleLoginAdmin)
 	adminGroup := v1.Group("/admin").Use(AdminAuthRequired())
+	adminGroup.GET("/summary", api.handleAdminSummary)
 	adminGroup.GET("/categorias", api.handleListCategorias)
 	adminGroup.POST("/categorias", api.handleCreateCategoria)
 	adminGroup.PUT("/categorias/:slug", api.handleUpdateCategoria)

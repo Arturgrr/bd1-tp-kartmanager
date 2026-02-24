@@ -1,0 +1,8 @@
+{
+  "type": "object",
+  "properties": {
+    "email": { "type": "string" },
+    "password": { "type": "string" }
+  },
+  "x-readme-ref-name": "github_com_arturgrr_bd1-kartmanager_internal_use-cases_admin.LoginAdminReq"
+}

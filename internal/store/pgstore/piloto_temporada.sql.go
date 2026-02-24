@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countPilotoTemporada = `-- name: CountPilotoTemporada :one
+SELECT COUNT(*) FROM piloto_temporada
+`
+
+func (q *Queries) CountPilotoTemporada(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countPilotoTemporada)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createPilotoTemporada = `-- name: CreatePilotoTemporada :one
 INSERT INTO piloto_temporada (piloto_cpf, temporada, categoria_slug, equipe_slug, pontos, vitorias, podios, melhor_volta, posicao)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)

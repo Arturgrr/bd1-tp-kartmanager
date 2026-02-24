@@ -1361,6 +1361,43 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/summary": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Resumo do dashboard admin (contagens)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_api.adminSummaryResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/categorias": {
             "get": {
                 "produces": [
@@ -2241,6 +2278,26 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "vitorias": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_api.adminSummaryResponse": {
+            "type": "object",
+            "properties": {
+                "categorias": {
+                    "type": "integer"
+                },
+                "corridas": {
+                    "type": "integer"
+                },
+                "equipes": {
+                    "type": "integer"
+                },
+                "pilotos": {
+                    "type": "integer"
+                },
+                "standings": {
                     "type": "integer"
                 }
             }

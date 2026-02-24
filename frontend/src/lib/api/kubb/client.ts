@@ -1,66 +1,75 @@
+import axios, { type AxiosError, type AxiosResponse } from "axios"
+
 export type RequestConfig<TData = unknown> = {
-  url?: string;
-  method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE";
-  params?: Record<string, string | number | boolean | undefined>;
-  data?: TData;
-  responseType?: "arraybuffer" | "blob" | "document" | "json" | "text" | "stream";
-  signal?: AbortSignal;
-  headers?: HeadersInit;
-};
-
-export type ResponseConfig<T = unknown> = {
-  data: T;
-  status: number;
-  statusText: string;
-};
-
-export type ResponseErrorConfig<T = unknown> = ResponseConfig<T>;
-
-export type Client = <T, E = unknown, D = unknown>(
-  config: RequestConfig<D>
-) => Promise<ResponseConfig<T>>;
-
-function getBaseURL(): string {
-  if (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
-  }
-  if (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_SERVER_URL) {
-    return process.env.NEXT_PUBLIC_SERVER_URL.replace(/\/$/, "");
-  }
-  return "http://localhost:8080/api/v1";
+  url?: string
+  method: "GET" | "PUT" | "PATCH" | "POST" | "DELETE"
+  params?: unknown
+  data?: TData
+  responseType?: "arraybuffer" | "blob" | "document" | "json" | "text" | "stream"
+  signal?: AbortSignal
+  headers?: Record<string, string>
 }
 
-function buildUrl(url: string, params?: Record<string, string | number | boolean | undefined>): string {
-  if (!params || Object.keys(params).length === 0) return url;
-  const search = new URLSearchParams();
-  for (const [k, v] of Object.entries(params)) {
-    if (v !== undefined && v !== "") search.set(k, String(v));
-  }
-  const q = search.toString();
-  return q ? `${url}${url.includes("?") ? "&" : "?"}${q}` : url;
+export type ResponseConfig<TData = unknown> = {
+  data: TData
+  status: number
+  statusText: string
+  headers?: AxiosResponse["headers"]
 }
 
-const defaultClient: Client = async <T>(config: RequestConfig) => {
-  const base = getBaseURL();
-  const path = config.url ?? "";
-  const fullUrl = buildUrl(
-    path.startsWith("http") ? path : `${base}${path.startsWith("/") ? path : `/${path}`}`,
-    config.params
-  );
-  const res = await fetch(fullUrl, {
-    method: config.method,
-    headers: config.headers ?? { "Content-Type": "application/json" },
-    signal: config.signal,
-    body: config.data != null ? JSON.stringify(config.data) : undefined,
-  });
-  const data = (await res.json().catch(() => ({}))) as T;
-  if (!res.ok) {
-    const err = new Error(res.statusText || String(res.status)) as Error & { status: number; data: T };
-    err.status = res.status;
-    err.data = data;
-    throw err;
-  }
-  return { data, status: res.status, statusText: res.statusText };
-};
+export type ResponseErrorConfig<TError = unknown> = {
+  data: TError
+  status: number
+  statusText: string
+}
 
-export default defaultClient;
+const baseURL =
+  typeof process !== "undefined" && process.env?.NEXT_PUBLIC_SERVER_URL
+    ? process.env.NEXT_PUBLIC_SERVER_URL.replace(/\/$/, "") + "/api/v1"
+    : "http://localhost:3333/api/v1"
+
+export const axiosInstance = axios.create({
+  baseURL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+})
+
+export type Client = <TData, TError = unknown, TVariables = unknown>(
+  config: RequestConfig<TVariables>,
+) => Promise<ResponseConfig<TData>>
+
+export const client = async <TData, TError = unknown, TVariables = unknown>(
+  config: RequestConfig<TVariables>,
+): Promise<ResponseConfig<TData>> => {
+  try {
+    const response = await axiosInstance.request<TData, AxiosResponse<TData>>({
+      url: config.url,
+      method: config.method,
+      params: config.params,
+      data: config.data,
+      responseType: config.responseType ?? "json",
+      signal: config.signal,
+      headers: config.headers,
+    })
+    return {
+      data: response.data,
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers,
+    }
+  } catch (err) {
+    const axiosError = err as AxiosError<TError>
+    const data = axiosError.response?.data ?? (axiosError.message as TError)
+    const status = axiosError.response?.status ?? 0
+    const statusText = axiosError.response?.statusText ?? axiosError.message
+    throw {
+      data,
+      status,
+      statusText,
+    } satisfies ResponseErrorConfig<TError>
+  }
+}
+
+export default client

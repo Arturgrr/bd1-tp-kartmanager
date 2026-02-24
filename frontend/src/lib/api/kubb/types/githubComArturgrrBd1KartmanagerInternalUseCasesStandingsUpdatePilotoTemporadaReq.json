@@ -1,0 +1,12 @@
+{
+  "type": "object",
+  "properties": {
+    "equipeSlug": { "type": "string" },
+    "melhorVolta": { "type": "string" },
+    "podios": { "type": "integer" },
+    "pontos": { "type": "integer" },
+    "posicao": { "type": "integer" },
+    "vitorias": { "type": "integer" }
+  },
+  "x-readme-ref-name": "github_com_arturgrr_bd1-kartmanager_internal_use-cases_standings.UpdatePilotoTemporadaReq"
+}

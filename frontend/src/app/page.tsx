@@ -24,13 +24,23 @@ function buildMaps(
 }
 
 export default async function HomePage() {
-  const [categories, pilots, teams, upcomingRacesRaw, completedRacesRaw] = await Promise.all([
-    fetchCategorias(),
-    fetchPilotos(),
-    fetchEquipes(),
-    fetchCorridasUpcoming(),
-    fetchCorridasCompleted(),
-  ])
+  let categories: Awaited<ReturnType<typeof fetchCategorias>> = []
+  let pilots: Awaited<ReturnType<typeof fetchPilotos>> = []
+  let teams: Awaited<ReturnType<typeof fetchEquipes>> = []
+  let upcomingRacesRaw: Awaited<ReturnType<typeof fetchCorridasUpcoming>> = []
+  let completedRacesRaw: Awaited<ReturnType<typeof fetchCorridasCompleted>> = []
+
+  try {
+    ;[categories, pilots, teams, upcomingRacesRaw, completedRacesRaw] = await Promise.all([
+      fetchCategorias(),
+      fetchPilotos(),
+      fetchEquipes(),
+      fetchCorridasUpcoming(),
+      fetchCorridasCompleted(),
+    ])
+  } catch {
+    // API indisponível (backend parado, CORS ou NEXT_PUBLIC_SERVER_URL incorreto)
+  }
 
   const upcomingRaces = upcomingRacesRaw.slice(0, 4)
   const completedRaces = completedRacesRaw.slice(0, 3)
@@ -38,7 +48,11 @@ export default async function HomePage() {
   const resultsBySlug: Record<string, RaceResultFromAPI[]> = {}
   await Promise.all(
     completedRaces.map(async (r) => {
-      resultsBySlug[r.slug] = await fetchResultadosByCorrida(r.slug)
+      try {
+        resultsBySlug[r.slug] = await fetchResultadosByCorrida(r.slug)
+      } catch {
+        resultsBySlug[r.slug] = []
+      }
     })
   )
 
